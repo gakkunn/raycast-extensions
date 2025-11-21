@@ -12,10 +12,14 @@ export default function Command() {
   const { projectRoots } = getPreferenceValues<Preferences>();
 
   const { data: recentProjects, isLoading: isLoadingRecent } = usePromise(getRecentProjects, [], {
-    onError: (error) => showToast(Toast.Style.Failure, "Failed to load recent projects", String(error)),
+    onError: (error) => {
+      showToast(Toast.Style.Failure, "Failed to load recent projects", String(error));
+    },
   });
   const { data: localProjects, isLoading: isLoadingLocal } = usePromise(getLocalProjects, [projectRoots], {
-    onError: (error) => showToast(Toast.Style.Failure, "Failed to load local projects", String(error)),
+    onError: (error) => {
+      showToast(Toast.Style.Failure, "Failed to load local projects", String(error));
+    },
   });
 
   const handleOpenNewWindow = async (path: string) => {
