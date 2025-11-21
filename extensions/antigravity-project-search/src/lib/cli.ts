@@ -5,7 +5,11 @@ import path from "path";
 
 const execFileAsync = promisify(execFile);
 
-const DARWIN_CANDIDATES = ["/usr/local/bin/antigravity", "/opt/homebrew/bin/antigravity"];
+const DARWIN_CANDIDATES = [
+  "/usr/local/bin/antigravity",
+  "/opt/homebrew/bin/antigravity",
+  process.env.HOME ? path.join(process.env.HOME, ".antigravity/antigravity/bin/antigravity") : "",
+];
 const LINUX_CANDIDATES = ["/usr/local/bin/antigravity", "/usr/bin/antigravity"];
 const WINDOWS_CANDIDATES = [
   path.join(process.env["ProgramFiles"] || "", "Antigravity/antigravity.exe"),
