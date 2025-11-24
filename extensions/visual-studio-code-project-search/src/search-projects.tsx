@@ -2,7 +2,7 @@ import { ActionPanel, Action, Icon, List, Toast, showToast, getPreferenceValues 
 import { usePromise } from "@raycast/utils";
 import { getRecentProjects } from "./lib/history";
 import { getLocalProjects } from "./lib/local";
-import { openProjectInNewWindow } from "./lib/cli";
+import { openProject, openProjectInNewWindow } from "./lib/cli";
 
 export default function Command() {
   const { projectRoots = "" } = getPreferenceValues<{
@@ -21,6 +21,14 @@ export default function Command() {
     },
   });
 
+  const handleOpen = async (projectPath: string) => {
+    try {
+      await openProject(projectPath);
+    } catch (error) {
+      await showToast(Toast.Style.Failure, "Failed to open project", String(error));
+    }
+  };
+
   const handleOpenNewWindow = async (projectPath: string) => {
     try {
       await openProjectInNewWindow(projectPath);
@@ -37,6 +45,7 @@ export default function Command() {
             key={projectPath}
             path={projectPath}
             type="recent"
+            onOpen={() => handleOpen(projectPath)}
             onOpenNewWindow={() => handleOpenNewWindow(projectPath)}
           />
         ))}
@@ -48,6 +57,7 @@ export default function Command() {
             key={projectPath}
             path={projectPath}
             type="local"
+            onOpen={() => handleOpen(projectPath)}
             onOpenNewWindow={() => handleOpenNewWindow(projectPath)}
           />
         ))}
@@ -59,10 +69,12 @@ export default function Command() {
 function ProjectListItem({
   path,
   type,
+  onOpen,
   onOpenNewWindow,
 }: {
   path: string;
   type: "recent" | "local";
+  onOpen: () => void;
   onOpenNewWindow: () => void;
 }) {
   const name = path.split("/").pop() || path;
@@ -74,7 +86,7 @@ function ProjectListItem({
       icon={type === "recent" ? Icon.Clock : Icon.Folder}
       actions={
         <ActionPanel>
-          <Action.Open title="Open in VS Code" target={path} application="Visual Studio Code" />
+          <Action title="Open in VS Code" onAction={onOpen} icon={Icon.Code} />
           <Action title="Open in New Window" onAction={onOpenNewWindow} icon={Icon.Window} />
           <Action.ShowInFinder path={path} />
           <Action.CopyToClipboard content={path} title="Copy Path" />

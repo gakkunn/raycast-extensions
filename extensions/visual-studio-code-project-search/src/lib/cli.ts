@@ -55,6 +55,11 @@ async function getCliPath(): Promise<string> {
   throw new Error("VS Code CLI not found. Please ensure 'code' is installed and in your PATH.");
 }
 
+export async function openProject(projectPath: string): Promise<void> {
+  const cli = await getCliPath();
+  await execFileAsync(cli, [projectPath]);
+}
+
 export async function openProjectInNewWindow(projectPath: string): Promise<void> {
   const cli = await getCliPath();
   await execFileAsync(cli, ["-n", projectPath]);
